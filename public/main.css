@@ -1,0 +1,52 @@
+/* ===== Global Styles ===== */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #0066ff;
+}
+
+.page-container {
+    margin-top: 80px;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+    background-color: #0056b3;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #003f88;
+}
+
+/* ===== Headings ===== */
+.page-title {
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* ===== Tables ===== */
+.table thead {
+    background-color: #0056b3;
+    color: white;
+}
+
+
+/* ===== Navbar ===== */
+.portal-header {
+    background-color: #0056b3;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* horizontal centering */
+    justify-content: center; /* vertical centering */
+    border: 5px solid red;
+    text-align: center;
+}
+

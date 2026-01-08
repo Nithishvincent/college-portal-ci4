@@ -1,0 +1,13 @@
+# CodeIgniter 4
+.env
+/vendor/
+/writable/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
