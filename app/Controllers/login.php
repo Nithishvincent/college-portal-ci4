@@ -16,7 +16,7 @@ class Login extends Controller
     {
         $db = Database::connect();
 
-        $username = $this->request->getPost('username'); // email
+        $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
         $user = $db->table('users')
@@ -35,7 +35,7 @@ class Login extends Controller
             ]);
 
             return redirect()->to('/dashboard');
-        }
+        }   
         if ($user['status'] !== 'active') {
             return redirect()->back()->with('error', 'Account inactive');
         }
