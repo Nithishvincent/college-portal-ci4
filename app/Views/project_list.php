@@ -16,7 +16,7 @@
     <tbody>
         <?php foreach ($projects as $p): ?>
         <tr>
-            <td><?= esc($p['name']) ?></td>
+            <td><?= esc($p['student_name']) ?></td>
             <td><?= esc($p['title']) ?></td>
             <td>
                 <span class="badge bg-<?= $p['status']=='graded'?'success':'warning' ?>">

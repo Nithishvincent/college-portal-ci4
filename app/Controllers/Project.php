@@ -110,46 +110,48 @@ class Project extends BaseController
        PROJECT LIST (FINAL FIX)
        =============================== */
     public function list()
-    {
-        if (!session()->get('logged_in')) {
-            return redirect()->to('/login');
-        }
-
-        $db = \Config\Database::connect();
-        $role = session()->get('role');
-        $userId = session()->get('user_id');
-
-        $builder = $db->table('projects p')
-            ->select('p.id,
-                    p.title,
-                    p.description,
-                    p.file_path,
-                    p.created_at,
-                    p.status,
-                    e.grade,
-                    e.remarks
-                ')
-
-            ->join('project_evaluations e', 'e.project_id = p.id', 'left');
-
-        if ($role === 'student') {
-            $studentModel = new StudentModel();
-            $student = $studentModel
-                        ->where('user_id', $userId)
-                        ->first();
-
-            if (!$student) {
-                return redirect()->to('/dashboard');
-            }
-
-            $builder->where('p.student_id', $student['id']);
-        }
-
-        $projects = $builder->get()->getResultArray();
-
-        return view('project_list', [
-            'projects'   => $projects,
-            'activePage' => 'project_list'
-        ]);
+{
+    if (!session()->get('logged_in')) {
+        return redirect()->to('/login');
     }
+
+    $db     = \Config\Database::connect();
+    $role   = session()->get('role');
+    $userId = session()->get('user_id');
+
+    $builder = $db->table('projects p')
+        ->select('
+            p.id,
+            p.title,
+            p.description,
+            p.file_path,
+            p.created_at,
+            p.status,
+            e.grade,
+            e.remarks,
+            s.name AS student_name
+        ')
+        ->join('students s', 's.id = p.student_id', 'left')
+        ->join('project_evaluations e', 'e.project_id = p.id', 'left');
+
+    if ($role === 'student') {
+        $studentModel = new StudentModel();
+        $student = $studentModel
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$student) {
+            return redirect()->to('/dashboard');
+        }
+
+        $builder->where('p.student_id', $student['id']);
+    }
+
+    $projects = $builder->get()->getResultArray();
+
+    return view('project_list', [
+        'projects'   => $projects,
+        'activePage' => 'project_list'
+    ]);
+}
 }

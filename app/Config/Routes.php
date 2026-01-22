@@ -79,8 +79,11 @@ $routes->post('admin/student/store', 'AdminStudent::store');
 //password reset
 $routes->get('password/change', 'Password::change');
 $routes->post('password/update', 'Password::update');
-
-
+//faculty routes
+$routes->get('faculty', 'Faculty::index');
+$routes->get('faculty/student/list', 'Faculty::studentList');
+$routes->get('faculty/student/(:num)', 'Faculty::student/$1');
+$routes->post('faculty/student/remark/(:num)', 'Faculty::addRemark/$1');
 
 
 /*
