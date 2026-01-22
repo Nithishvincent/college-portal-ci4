@@ -29,54 +29,82 @@ class Project extends BaseController
        SAVE PROJECT (FINAL FIX)
        =============================== */
     public function save()
+{
+    if (session()->get('role') !== 'student') {
+        return redirect()->to('/login');
+    }
+
+    $studentModel = new \App\Models\StudentModel();
+    $projectModel = new \App\Models\ProjectModel();
+
+    // Find student via user_id
+    $student = $studentModel
+        ->where('user_id', session()->get('user_id'))
+        ->first();
+
+    if (!$student) {
+        return redirect()->to('/dashboard')
+            ->with('error', 'Student profile not found. Contact admin.');
+    }
+
+    // Insert project with STUDENT ID
+    $projectModel->insert([
+        'student_id' => $student['id'],
+        'title'      => $this->request->getPost('title'),
+        'description'=> $this->request->getPost('description'),
+        'status'     => 'submitted'
+    ]);
+
+    return redirect()->to('/project/list')->with('success', 'Project submitted');
+}
+    /* ===============================
+       UPLOAD PROJECT FILE (FINAL FIX)
+       =============================== */
+    public function uploadFile($projectId)
     {
-        if (!session()->get('logged_in')) {
+        if (session()->get('role') !== 'student') {
             return redirect()->to('/login');
         }
 
-        if (session()->get('role') !== 'student') {
-            return redirect()->to('/dashboard');
+        $projectModel = new ProjectModel();
+
+        $project = $projectModel->find($projectId);
+
+        if (!$project) {
+            return redirect()->to('/project/list')
+                ->with('error', 'Project not found');
         }
 
-        // 🔑 FETCH STUDENT USING user_id
+        // Verify ownership
         $studentModel = new StudentModel();
         $student = $studentModel
-                    ->where('user_id', session()->get('user_id'))
-                    ->first();
+            ->where('user_id', session()->get('user_id'))
+            ->first();
 
-        if (!$student) {
-            return redirect()->back()->with('error', 'Student record not found');
+        if ($project['student_id'] != $student['id']) {
+            return redirect()->to('/project/list')
+                ->with('error', 'Unauthorized action');
         }
 
-        // File handling
+        // Handle file upload
         $file = $this->request->getFile('project_file');
 
-        if (!$file || !$file->isValid()) {
-            return redirect()->back()->with('error', 'Invalid file');
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newName = $file->getRandomName();
+            $file->move(WRITEPATH . 'uploads/projects/', $newName);
+
+            // Update project record with file path
+            $projectModel->update($projectId, [
+                'file_path' => 'uploads/projects/' . $newName
+            ]);
+
+            return redirect()->to('/project/list')
+                ->with('success', 'File uploaded successfully');
+        } else {
+            return redirect()->to('/project/list')
+                ->with('error', 'File upload failed');
         }
-
-        $allowedTypes = ['pdf', 'doc', 'docx'];
-        $ext = $file->getClientExtension();
-
-        if (!in_array($ext, $allowedTypes)) {
-            return redirect()->back()->with('error', 'Invalid file type');
-        }
-
-        $newName = $file->getRandomName();
-        $file->move('uploads/projects', $newName);
-
-        // Save project
-        $projectModel->insert([
-            'student_id'  => $student['id'],
-            'title'       => $this->request->getPost('title'),
-            'description' => $this->request->getPost('description'),
-            'file_path'   => 'uploads/projects/' . $newName,
-            'status'      => 'submitted'
-        ]);
-
-        return redirect()->to('/project/list')
-                         ->with('success', 'Project submitted successfully');
-    }
+}
 
     /* ===============================
        PROJECT LIST (FINAL FIX)

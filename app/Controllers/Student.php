@@ -49,6 +49,37 @@ public function save(){
 
     return redirect()->to('/student/list');
 }
+public function store()
+{
+    if (session()->get('role') !== 'admin') {
+        return redirect()->to('/login');
+    }
+
+    $studentModel = new \App\Models\StudentModel();
+    $userModel    = new \App\Models\UserModel();
+
+    $email = $this->request->getPost('email');
+
+    // Prevent duplicate student
+    if ($studentModel->where('email', $email)->first()) {
+        return redirect()->back()->with('error', 'Student already exists');
+    }
+
+    // Find user by email (if exists)
+    $user = $userModel->where('email', $email)->first();
+
+    $studentModel->insert([
+        'user_id'    => $user ? $user['id'] : null,
+        'email'      => $email,
+        'name'       => $this->request->getPost('name'),
+        'reg_no'     => $this->request->getPost('reg_no'),
+        'department' => $this->request->getPost('department'),
+        'college'    => $this->request->getPost('college')
+    ]);
+
+    return redirect()->to('/student/list')->with('success', 'Student registered');
+}
+
 
     public function update($id)
     {

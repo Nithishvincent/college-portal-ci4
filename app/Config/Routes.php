@@ -65,6 +65,7 @@ $routes->get('admin/dashboard', 'Dashboard::admin');
 //user management
 $routes->get('users', 'User::index');
 $routes->post('users/update', 'User::update');
+$routes->post('users/store', 'User::store');
 //dashboard routes
 // Entry dashboard (router)
 $routes->get('dashboard', 'Dashboard::index');
