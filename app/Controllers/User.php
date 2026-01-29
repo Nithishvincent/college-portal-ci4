@@ -36,7 +36,7 @@ class User extends BaseController
             return redirect()->back()->with('error', 'User already exists');
         }
 
-        // 1️⃣ Create user
+        // Create user
         $userId = $userModel->insert([
             'email'    => $email,
             'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
@@ -44,7 +44,7 @@ class User extends BaseController
             'status'   => 'active'
         ]);
 
-        // 2️⃣ Auto-link student if exists
+        // Auto-link student if exists
         $student = $studentModel->where('email', $email)->first();
         if ($student && !$student['user_id']) {
             $studentModel->update($student['id'], [

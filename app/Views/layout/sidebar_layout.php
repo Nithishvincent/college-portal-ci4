@@ -72,7 +72,7 @@
             Admin Dashboard
         </a>
 
-        <a href="<?= site_url('users') ?>"
+        <a href="<?= site_url('admin/users') ?>"
            class="<?= ($activePage ?? '') === 'users' ? 'active' : '' ?>">
             User Management
         </a>

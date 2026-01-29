@@ -63,7 +63,7 @@ $routes->post('evaluation/update/(:num)', 'Evaluation::update/$1');
 //admin dashboard
 $routes->get('admin/dashboard', 'Dashboard::admin');
 //user management
-$routes->get('users', 'User::index');
+$routes->get(' ', 'User::index');
 $routes->post('users/update', 'User::update');
 $routes->post('users/store', 'User::store');
 //dashboard routes
